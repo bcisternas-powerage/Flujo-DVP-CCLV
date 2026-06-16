@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Flujo DVP/CCLV — Índice</title><link rel='stylesheet' href='estilo.css'></head><body><h1>Flujo DVP / CCLV — Documentación funcional y técnica</h1>
+<div class='meta'>Esta documentación describe, de extremo a extremo, el flujo de pagos de altos montos
+<b>DVP</b> (Delivery versus Payment, contra el DCV) y <b>CCLV</b> (Contraparte Central), construido como una
+extensión del flujo <b>LBTR</b> existente. Su objetivo es que, ante cualquier modificación, se sepa qué procesos o
+programas intervienen y en qué etapa del flujo.<br><br>
+<b>Proyecto:</b> DVP-CCLV (épica IS-1018) &nbsp;·&nbsp; <b>Etiqueta:</b> OrangeCash &nbsp;·&nbsp;
+<b>Fuentes:</b> tickets IS-1070, IS-1071, IS-1131; documento de Servicios LBTR en línea; contrato de inyección
+MDP0015/MDP0017; planillas de mapeo de entrada, contabilidad y consideraciones.</div>
+<h2>Diagrama del flujo de extremo a extremo</h2>
+<svg width="100%" viewBox="0 0 680 720" xmlns="http://www.w3.org/2000/svg" style="max-width:760px;display:block;margin:10px auto">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#5e6c84" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<style>.t{font:500 14px Arial;fill:#172b4d}.s{font:12px Arial;fill:#5e6c84}.a{stroke:#5e6c84;stroke-width:1.5;fill:none}</style>
+<text class="t" x="40" y="28">1. Canal</text>
+<rect x="40" y="38" width="600" height="52" rx="8" fill="#f1efe8" stroke="#888780" stroke-width="0.5"/>
+<text class="t" x="60" y="60">Carga y autorización de nómina</text>
+<text class="s" x="60" y="78">Cliente institucional carga archivo / digita trx · firma conjunta · valida montos y horario</text>
+<line x1="340" y1="90" x2="340" y2="112" class="a" marker-end="url(#ar)"/>
+<text class="t" x="40" y="132">2. Core IBS — ingreso</text>
+<rect x="40" y="142" width="290" height="56" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+<text class="t" x="60" y="164">Notificar carga</text><text class="s" x="60" y="182">ILBTR060 → valida y crea nómina</text>
+<rect x="350" y="142" width="290" height="56" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+<text class="t" x="370" y="164">Tablas destino</text><text class="s" x="370" y="182">CINTNOH · CSMNOD · CSMNOD_EX</text>
+<line x1="330" y1="170" x2="348" y2="170" class="a" marker-end="url(#ar)"/>
+<line x1="185" y1="198" x2="185" y2="220" class="a" marker-end="url(#ar)"/>
+<text class="t" x="40" y="240">3. Core IBS — autorización (IS-1071)</text>
+<rect x="40" y="250" width="600" height="74" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="0.5"/>
+<text class="t" x="60" y="272">ILBTR010 — cambio de estado por firma</text>
+<text class="s" x="60" y="292">06 = firmas pendientes · 08 = última firma: valida nº trx y monto máx diario (TRSMST)</text>
+<text class="s" x="60" y="310">Provisión + comisión: asientos JRNIBS según TDOPECON · historial nómina</text>
+<line x1="340" y1="324" x2="340" y2="346" class="a" marker-end="url(#ar)"/>
+<text class="t" x="40" y="366">4. Switch AS400 / RPG — inyección</text>
+<rect x="40" y="376" width="290" height="56" rx="8" fill="#eeedfe" stroke="#534ab7" stroke-width="0.5"/>
+<text class="t" x="60" y="398">ILBTR017 → MDP0017</text><text class="s" x="60" y="416">Buffer EMDP01701 · deriva por producto</text>
+<rect x="350" y="376" width="290" height="56" rx="8" fill="#eeedfe" stroke="#534ab7" stroke-width="0.5"/>
+<text class="t" x="370" y="398">MDP0015 + @Sr_lbtrext</text><text class="s" x="370" y="416">MDPLBTR / MDPBENE + MDPLBTREXT</text>
+<line x1="330" y1="404" x2="348" y2="404" class="a" marker-end="url(#ar)"/>
+<line x1="185" y1="432" x2="185" y2="454" class="a" marker-end="url(#ar)"/>
+<text class="t" x="40" y="474">5. Switch — orquestación</text>
+<rect x="40" y="484" width="290" height="56" rx="8" fill="#eeedfe" stroke="#534ab7" stroke-width="0.5"/>
+<text class="t" x="60" y="506">MDP0010 (BIC24X7)</text><text class="s" x="60" y="524">Lee trx estado 'L' · ¿DVP/CCLV? → MDP0016</text>
+<rect x="350" y="484" width="290" height="56" rx="8" fill="#eeedfe" stroke="#534ab7" stroke-width="0.5"/>
+<text class="t" x="370" y="506">MDP0016 — arma XML</text><text class="s" x="370" y="524">CHAIN a tablas base + extendida → SOAP</text>
+<line x1="330" y1="512" x2="348" y2="512" class="a" marker-end="url(#ar)"/>
+<line x1="490" y1="540" x2="490" y2="562" class="a" marker-end="url(#ar)"/>
+<text class="t" x="40" y="582">6. Motor de pagos y redes externas</text>
+<rect x="350" y="592" width="290" height="56" rx="8" fill="#faeeda" stroke="#854f0b" stroke-width="0.5"/>
+<text class="t" x="370" y="614">Motor MDP (ISO 20022)</text><text class="s" x="370" y="632">COMBANC/DCV · CCLV/B.Central · resp 99/100/301</text>
+<line x1="350" y1="620" x2="332" y2="620" class="a" marker-end="url(#ar)"/>
+<rect x="40" y="592" width="290" height="56" rx="8" fill="#eaf3de" stroke="#3b6d11" stroke-width="0.5"/>
+<text class="t" x="60" y="614">ILBTR015 — notifica portal</text><text class="s" x="60" y="632">Actualiza estado · 09 pagado · 99 sin fondos</text>
+<line x1="185" y1="592" x2="185" y2="552" class="a" marker-end="url(#ar)"/>
+<text class="t" x="40" y="676">7. Consulta de estados (IS-1070)</text>
+<rect x="40" y="686" width="600" height="26" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+<text class="s" x="60" y="702">PA_CNOMINA · PA_CDETNOM · PA_CABDET — exponen campos nuevos DVP/CCLV al canal</text>
+</svg>
+<p class='legend'>Azul = Core IBS · Verde-azulado = autorización · Morado = Switch AS400/RPG · Ámbar = motor de pagos · Verde = notificación. Las cajas se detallan en las páginas de cada etapa.</p>
+<h2>Cómo está organizada esta documentación</h2>
+<p>Tres bloques de páginas:</p>
+<ul>
+<li><b>Etapas del flujo</b> — qué ocurre en cada tramo (ingesta SWIFT, canal, ingreso, autorización, inyección, orquestación, motor, consulta) y qué programas/tablas intervienen.</li>
+<li><b>Tickets / cards</b> — el detalle de cada historia con su alcance, criterios de aceptación y notas técnicas.</li>
+<li><b>Referencias transversales</b> — la matriz de "qué intervenir y en qué etapa", el contrato de inyección, el mapeo del archivo de entrada, la contabilidad, las consideraciones de negocio y los catálogos de estados/errores.</li>
+</ul>
+<h3>Etapas del flujo</h3>
+<table><thead><tr><th>Etapa</th><th>Página</th><th>Programas / tablas clave</th></tr></thead><tbody>
+<tr><td>1. Canal</td><td><a href='paginas/etapa-1-canal.html'>Canal y autorización</a></td><td>Mini-sitio · pizarra de autorización · KTF</td></tr>
+<tr><td>0. Ingesta SWIFT</td><td><a href='paginas/etapa-0-ingesta-swift.html'>Ingesta SWIFT (MT298)</a></td><td>IN0050 → PRCNF · INFWR (origen de IS-1131)</td></tr>
+<tr><td>2. Ingreso al core</td><td><a href='paginas/etapa-2-ingreso.html'>Ingreso y creación de nómina</a></td><td>ILBTR060 · CINTNOH · CSMNOD · CSMNOD_EX</td></tr>
+<tr><td>3. Autorización</td><td><a href='paginas/etapa-3-autorizacion.html'>Autorización, provisión y comisión</a></td><td>ILBTR010 · TRSMST · TDOPECON · JRNIBS</td></tr>
+<tr><td>4-5. Switch</td><td><a href='paginas/etapa-4-5-switch.html'>Inyección y orquestación (Switch)</a></td><td>ILBTR017 · MDP0017 · MDP0015 · MDP0010 · MDP0016 · MDPLBTREXT</td></tr>
+<tr><td>6. Motor de pagos</td><td><a href='paginas/etapa-6-motor.html'>Motor de pagos y notificación</a></td><td>Motor MDP · ILBTR015 · COMBANC/DCV · CCLV</td></tr>
+<tr><td>7. Consulta</td><td><a href='paginas/etapa-7-consulta.html'>Consulta de nóminas y estados</a></td><td>PA_CNOMINA · PA_CDETNOM · PA_CABDET</td></tr>
+</tbody></table>
+<h3>Tickets / cards del proyecto</h3>
+<table><thead><tr><th>Ticket</th><th>Título</th><th>Estado</th><th>Página</th></tr></thead><tbody>
+<tr><td>IS-1070</td><td>Incorporación de campos nuevos en consultas LBTR</td><td><span class='pill p-done'>Finalizado</span></td><td><a href='paginas/ticket-IS-1070.html'>Ver detalle</a></td></tr>
+<tr><td>IS-1071</td><td>Mejoras a autorización de nóminas para nuevos productos</td><td><span class='pill p-done'>Finalizado</span></td><td><a href='paginas/ticket-IS-1071.html'>Ver detalle</a></td></tr>
+<tr><td>IS-1131</td><td>Detección, carga y caducidad de mensajes SWIFT MT298</td><td><span class='pill p-prog'>En progreso</span></td><td><a href='paginas/ticket-IS-1131.html'>Ver detalle</a></td></tr>
+<tr><td>(Técnico)</td><td>Nuevo servicio de inyección DVP/CCLV (clon de MDP0015)</td><td><span class='pill p-done'>Contrato</span></td><td><a href='paginas/contrato-inyeccion.html'>Ver contrato</a></td></tr>
+</tbody></table>
+<h3>Referencias transversales</h3>
+<table><thead><tr><th>Página</th><th>Contenido</th></tr></thead><tbody>
+<tr><td><a href='paginas/matriz-impacto.html'>Matriz de impacto</a></td><td><b>Qué intervenir y en qué etapa</b> — programa/tabla × etapa × ticket</td></tr>
+<tr><td><a href='paginas/mapeo-entrada.html'>Mapeo del archivo de entrada</a></td><td>Cabecera y detalle (LBTRINTE), posiciones 1-200, validaciones y PA destino</td></tr>
+<tr><td><a href='paginas/programa-IN0050.html'>Programa IN0050</a></td><td>Interfaz SWIFT que genera PRCNF e INFWR (se consume tal cual)</td></tr>
+<tr><td><a href='paginas/mapeo-SWF298F.html'>Mapeo del pivote SWF298F</a></td><td>~55 campos del pivote MT298 con reglas de extracción desde PRCNF/INFWR</td></tr>
+<tr><td><a href='paginas/estados-mt298.html'>Ciclo de vida MT298 y caducador</a></td><td>Los 7 estados de la transacción, el flujo de 5 pasos y la lógica del proceso caducador (con infografías)</td></tr>
+<tr><td><a href='paginas/contabilidad.html'>Contabilidad</a></td><td>Asientos LBTR / DVP / CCLV: provisión, comisión, devolución, inyección MDP</td></tr>
+<tr><td><a href='paginas/consideraciones.html'>Consideraciones de negocio</a></td><td>Montos máximos, límites diarios, firmas, comisión, horarios, validaciones</td></tr>
+<tr><td><a href='paginas/estados-y-errores.html'>Estados y catálogos de error</a></td><td>Estados de nómina/transacción, códigos de rechazo, switch, tablas CNTIN</td></tr>
+</tbody></table>
+<div class='warn'><b>Nota sobre datos sensibles:</b> los documentos de origen contienen ejemplos con RUT,
+números de cuenta, credenciales de API (app_id / app_key) y URLs de ambientes de prueba. Antes de publicar en un
+Confluence de acceso amplio o en un repositorio, conviene revisar y enmascarar esos valores.</div></body></html>
