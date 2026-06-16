@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>IS-1131</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>IS-1131 · CWP-395 — Detección, carga y caducidad de mensajes SWIFT MT298</h1>
+<div class='meta'><b>Estado:</b> <span class='pill p-prog'>En progreso</span> &nbsp;·&nbsp;
+<b>Prioridad:</b> Alta &nbsp;·&nbsp; <b>Story points:</b> 8 &nbsp;·&nbsp; <b>Asignado:</b> Braulio Cisternas ·
+<b>Clon de IS-1110 (CWP-395)</b>. A entregar: 29/jun/26.</div>
+<div class='warn'><b>Ticket en desarrollo.</b> Esta sección documenta el alcance y las notas técnicas
+conocidas; el detalle final puede cambiar.</div>
+<h2>Contexto</h2>
+<p>Dejar disponible al canal los datos de un archivo pivote que almacena los mensajes SWIFT tipo 298 enviados por SWIFT con la información de la transacción digitada en DCV. Además, un proceso que caduca las transacciones del día en curso.</p>
+<h2>Alcance — dos procesos</h2>
+<ol>
+<li><b>Caducar transacciones del día:</b> cambia a estado <i>Caducado</i> todas las transacciones del archivo pivote cuya fecha de creación sea menor a la fecha de ejecución.</li>
+<li><b>Detección y carga MT298:</b> identifica la llegada de un mensaje SWIFT tipo 298 en las bases del modelo Core (<code>PRCNF</code>, <code>INFWR</code>, <code>WRTRF</code>) y carga la información en el archivo pivote, que luego se expone al cliente vía canal web.</li>
+</ol>
+<h2>Datos a cargar</h2>
+<table><thead><tr><th>Grupo</th><th>Campos</th></tr></thead><tbody>
+<tr><td>Ordenante</td><td>RUT · Banco (fijo 009) · cuenta de cargo · tipo de cuenta · código DCV</td></tr>
+<tr><td>Destino</td><td>RUT · cuenta · tipo de cuenta · código banco · nombre del banco · código DCV</td></tr>
+<tr><td>Transacción</td><td>Clave (se usa 1, pero la tabla permite hasta 10 como en CSMNOD_EX) · monto · Trx ID del DCV · Trx ID único en el core · fecha de la transacción</td></tr>
+</tbody></table>
+<h2>Notas técnicas — acceso a los datos</h2>
+<div class='ok'><b>Origen de los datos:</b> los archivos <code>PRCNF</code> e <code>INFWR</code> los genera el programa
+heredado <a href='programa-IN0050.html'>IN0050</a> (interfaz SWIFT), que se <b>consume tal cual</b> — no se modifica.
+El trabajo de esta card es un proceso nuevo que <b>interpreta</b> esos mensajes y los carga en el pivote
+<code>SWF298F</code>. Ver <a href='etapa-0-ingesta-swift.html'>Etapa 0 — Ingesta SWIFT</a> y el
+<a href='mapeo-SWF298F.html'>mapeo completo del pivote SWF298F</a>.</div>
+<p>Acceso desde <code>PRCNF</code> mediante los campos <code>PRCSRF</code> y <code>PRCSMT</code> hacia <code>INFWR</code> con sus referentes <code>INFSRF</code> e <code>INFSST</code>.</p>
+<table><thead><tr><th>Si INFSST</th><th>Tags a considerar</th></tr></thead><tbody>
+<tr><td><code>103</code> (MT103)</td><td>20, 12, 77E, 32A, 50K, 57A, 59, 72</td></tr>
+<tr><td><code>202</code> (MT202)</td><td>20, 12, 77E, 32A, 52A, 57A, 58A, 72</td></tr>
+</tbody></table>
+<p class='legend'>Tags: 20 Referencia · 32 Fecha/Moneda/Monto · 50 Cliente ordenante · 52 Banco ordenante · 57 Banco beneficiario · 58/59 Cuenta beneficiario · 72 Info adicional entre bancos.</p>
+<h2>Criterios de aceptación</h2>
+<p>CA-01 Carga de data (descomponer el MT298 y cargar en pivote en estado <i>recuperado</i>) · CA-02 Caducar mensajes (al avanzar la fecha, los disponibles/en proceso quedan <i>caducados</i> con proceso y timestamp).</p>
+<div class='ok'>El ciclo de vida completo (los 7 estados de la transacción y la lógica del proceso caducador) está documentado, con infografías, en <a href='estados-mt298.html'>Ciclo de vida MT298 y proceso caducador</a>.</div></body></html>

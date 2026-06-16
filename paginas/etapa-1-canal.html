@@ -1,0 +1,19 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Etapa 1 — Canal</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>Etapa 1 — Canal: carga y autorización</h1>
+<div class='meta'>El cliente institucional opera desde el canal privado (mini-sitio / pizarra de autorización). Aquí se cargan o digitan las transacciones, se aplican las firmas y se validan las reglas de negocio antes de notificar al core.</div>
+<h2>Qué ocurre</h2>
+<ul>
+<li>El cliente carga un archivo LBTR o digita transacciones (DVP/CCLV son de tipo transaccional, altos montos).</li>
+<li>Las operaciones requieren <b>firma conjunta</b> (la individual no se permite para estos productos).</li>
+<li>El canal valida montos máximos por transacción y por día, y el horario de operación, antes de enviar al core.</li>
+<li>Solo los apoderados pueden crear o modificar destinatarios (requiere Interpass).</li>
+</ul>
+<h2>Configuración en el canal (KTF)</h2>
+<table><thead><tr><th>Configuración</th><th>Dónde</th></tr></thead><tbody>
+<tr><td>Disponibilidad del switch (subir/bajar canal)</td><td><code>update Parametros set Descripcion=0 where concepto='LBTR' and codigo='DISPONIBLE'</code></td></tr>
+<tr><td>Montos máximos por empresa</td><td><code>select * from parametros where concepto='EMPRESA' and codigo in ('MONTO_DVP','MONTO_CCLV','MONTO_LBTR')</code></td></tr>
+<tr><td>Contratos / comisión</td><td>Tabla <code>comisionLBTR</code></td></tr>
+<tr><td>Destinatarios</td><td>Tabla <code>destinatario_alto_valor</code></td></tr>
+<tr><td>Bancos destino permitidos</td><td>Listado en el secreto del canal (separados por coma)</td></tr>
+</tbody></table>
+<p>Reglas de negocio detalladas en <a href='consideraciones.html'>Consideraciones de negocio</a>. Siguiente etapa: <a href='etapa-2-ingreso.html'>Ingreso al core</a>.</p></body></html>

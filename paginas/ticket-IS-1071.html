@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>IS-1071</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>IS-1071 · CWP-288 — Mejoras a autorización de nóminas para nuevos productos</h1>
+<div class='meta'><b>Estado:</b> <span class='pill p-done'>Finalizado</span> &nbsp;·&nbsp;
+<b>Tipo:</b> Habilitador técnico &nbsp;·&nbsp; <b>Story points:</b> 8 &nbsp;·&nbsp; <b>Asignado:</b> Roberto Echeverría ·
+<b>Épica:</b> Proyecto DVP-CCLV. Relacionado con CAMBIOS-8795, IS-1060.</div>
+<h2>Descripción</h2>
+<p>Como desarrollador Core, modificar el flujo de autorización para procesar las nuevas transacciones de pagos de altos montos (DVP y CCLV).</p>
+<h2>Alcance — pasos de autorización</h2>
+<table><thead><tr><th>Paso</th><th>Detalle</th></tr></thead><tbody>
+<tr><td>1. No es la última firma</td><td>Llamado a ILBTR010 con estado <code>06</code>; guarda en historial.</td></tr>
+<tr><td>2. Es la última firma</td><td>Llamado a ILBTR010 con estado <code>08</code>; valida cantidad de transacciones y montos máximos diarios. Nuevas entradas por producto y por cliente en canales electrónicos: LBTR Archivo y LBTR Trx usan la entrada LBTR; DVP y CCLV requieren nueva entrada por producto y cliente.</td></tr>
+<tr><td>3. Provisión y cobro de comisión</td><td>Mantiene la funcionalidad actual de cargo en cuenta y comisión. Contabilidad distinta para LBTR, DVP y CCLV (se adiciona TDOPECON para los nuevos tipos).</td></tr>
+<tr><td>4. Inyectar al switch</td><td>Coordinar con equipo BADBATCH; considerar campos adicionales por tipo de transacción.</td></tr>
+<tr><td>5. Actualizar estados</td><td>Actualizar estado de nóminas y transacciones.</td></tr>
+</tbody></table>
+<div class='danger'><b>Cambio de estado (todos los productos):</b> el pagado pasa de <code>06</code> a
+<code>09</code> en el motor (aplica a todos los tipos de producto). El código <code>99</code> = faltan fondos en la
+cámara, debe agregarse en la tabla de códigos.</div>
+<h2>Criterios de aceptación</h2>
+<p>CA-01 No es la última firma · CA-02 Es la última firma (validación) · CA-03 Provisión y cobro de comisión · CA-04 Inyectar transacciones al switch · CA-05 Actualizar estado de nóminas y transacciones.</p>
+<h2>Avances registrados (comentarios)</h2>
+<ul>
+<li>Componentes modificados: <code>ILBTR010</code>, <code>ILBTR060</code>, <code>LBTR0100</code>; construido <code>ILBTR017</code> (campo <code>E17EXTREM</code> largo 13).</li>
+<li>Parametría: <code>TDOPECON</code> (archivo TDOPE_8795, 8 registros) · seguridad <code>TRSMST</code> · canales <code>CNOFC 62</code> (DVP y CCLV).</li>
+<li>Dependencia de clase <code>EMDP01701</code> para compilar ILBTR017 en Aldon.</li>
+<li>Conflicto de componente: ILBTR060 reservado por otro desarrollador; cambios se publican en <code>LDPOWERAGE/Q8795</code> con marca <code>I1071</code>.</li>
+<li>Pruebas conceptuales: llegada desde ILBTR010 hasta MDP0017; lectura de TDOPECON y TRSMST; generación de JRNIBS; cambios de estado; lectura de archivo extendido para campos DVP/CCLV.</li>
+</ul></body></html>

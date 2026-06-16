@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Etapa 3 — Autorización</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>Etapa 3 — Autorización, provisión y comisión</h1>
+<div class='meta'>Cubierta principalmente por <a href='ticket-IS-1071.html'>IS-1071</a>. El flujo de autorización debe procesar los nuevos productos de altos montos, validando límites, provisionando fondos, cobrando comisión e inyectando al switch.</div>
+<h2>Programa principal: ILBTR010 (Cambiar Estado)</h2>
+<p>Cambia el estado de una nómina. Llamada <code>ILBTR01001</code>. Parametría en <code>CNTIN 326</code> subítem <code>00000023</code>.</p>
+<h2>Pasos del flujo de autorización</h2>
+<table><thead><tr><th>Paso</th><th>Qué hace</th><th>Detalle</th></tr></thead><tbody>
+<tr><td>1. No es la última firma</td><td>Llama a ILBTR010 con estado <code>06</code></td><td>Guarda en historial de la nómina</td></tr>
+<tr><td>2. Es la última firma</td><td>Llama a ILBTR010 con estado <code>08</code></td><td>Valida cantidad de trx y monto máximo diario (parametría de seguridad <code>TRSMST</code>)</td></tr>
+<tr><td>3. Provisión y comisión</td><td>Cargo en cuenta + comisión + IVA</td><td>Mantiene funcionalidad actual; contabilidad distinta por producto (ver TDOPECON)</td></tr>
+<tr><td>4. Inyección al switch</td><td>Envía las transacciones al switch</td><td>Considera campos adicionales según tipo (coordinar con equipo BADBATCH). Ver <a href='etapa-4-5-switch.html'>etapa 4-5</a></td></tr>
+<tr><td>5. Actualizar estados</td><td>Actualiza estado de nómina y transacciones</td><td>Cambio de estado de pagado (ver abajo)</td></tr>
+</tbody></table>
+<div class='danger'><b>Cambio de estado confirmado para todos los productos (LBTR, DVP, CCLV):</b>
+el estado "Pagado" pasa de <code>06</code> a <code>09</code> en el motor, y el código <code>99</code> indica
+"faltan fondos en la cámara". Este cambio aplica a todos los tipos de producto, no solo a DVP/CCLV, por lo que
+toca el motor (validar con el motor de pagos). El código 99 debe agregarse en la tabla de códigos.</div>
+<h2>Componentes modificados (según comentarios del ticket)</h2>
+<ul>
+<li>Procesos: <code>ILBTR010</code>, <code>ILBTR060</code>, <code>LBTR0100</code>, <code>ILBTR017</code> (nuevo inyector), clase <code>EMDP01701</code>.</li>
+<li>Parametría: <code>TDOPECON</code> (8 registros: 4 movimiento cta cte + 4 comisiones), <code>TRSMST</code> (seguridad montos/trx máximas), <code>CNOFC 62</code> (nuevos canales DVP y CCLV).</li>
+<li>Validado en pruebas conceptuales: lectura de TDOPECON y TRSMST, generación de JRNIBS, cambios de estado, lectura de archivo extendido para campos DVP/CCLV.</li>
+</ul>
+<p>Contabilidad detallada en <a href='contabilidad.html'>Contabilidad</a>.</p></body></html>

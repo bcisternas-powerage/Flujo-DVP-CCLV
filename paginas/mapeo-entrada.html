@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Mapeo de entrada</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>Mapeo del archivo de entrada (LBTRINTE)</h1>
+<div class='meta'>Estructura de la trama de carga, posiciones 1-200. Las posiciones 59-200 son las nuevas para DVP/CCLV. Cada campo indica su validación, la tabla/campo donde se persiste y el PA que lo expone.</div>
+<h2>Cabecera</h2>
+<table><thead><tr><th>Campo</th><th>Tipo</th><th>Largo</th><th>Desde</th><th>Hasta</th><th>Validación</th><th>Persiste en</th></tr></thead><tbody>
+<tr><td>Tipo registro</td><td>S</td><td>1</td><td>1</td><td>1</td><td>Fijo '1'</td><td>—</td></tr>
+<tr><td>Nro. registro detalle</td><td>S</td><td>10</td><td>2</td><td>11</td><td>Se mantiene</td><td>CINTNOH/NOHNRO</td></tr>
+<tr><td>Monto detalle</td><td>S</td><td>17</td><td>12</td><td>28</td><td>Se mantiene</td><td>CINTNOH/NOHMTO</td></tr>
+<tr><td>RUT empresa</td><td>A</td><td>10</td><td>29</td><td>38</td><td>Se mantiene</td><td>CINTNOH/NOHRCL</td></tr>
+<tr><td>Cuenta cargo</td><td>A</td><td>20</td><td>39</td><td>58</td><td>Se mantiene</td><td>CINTNOH/NOHACC</td></tr>
+<tr><td><b>Tipo interfaz</b></td><td>S</td><td>1</td><td>59</td><td>59</td><td>Solo 1-4 (err 14)</td><td>CINTNOH/NOHTYN · CSMNOD_EX/ENODTYN</td></tr>
+<tr><td><b>Código DCV ordenante</b></td><td>S</td><td>5</td><td>60</td><td>64</td><td>Si tipo=3, ≠00000</td><td>CSMNOD_EX/ENODDCO</td></tr>
+<tr><td><b>Agente CCLV</b></td><td>S/A</td><td>4</td><td>65</td><td>68</td><td>Si tipo=4, ≠00000; canal suma X al final</td><td>CSMNOD_EX/ENODAGE</td></tr>
+<tr><td>Filler</td><td>A</td><td>132</td><td>69</td><td>200</td><td>No validar</td><td>—</td></tr>
+</tbody></table>
+<h2>Detalle</h2>
+<table><thead><tr><th>Campo</th><th>Tipo</th><th>Largo</th><th>Desde</th><th>Hasta</th><th>Validación</th><th>Persiste en</th></tr></thead><tbody>
+<tr><td>Tipo registro</td><td>S</td><td>1</td><td>1</td><td>1</td><td>Fijo '2'</td><td>—</td></tr>
+<tr><td>RUT beneficiario</td><td>A</td><td>10</td><td>2</td><td>11</td><td>Se mantiene</td><td>CSMNOD/NODRAB</td></tr>
+<tr><td>Nombre beneficiario</td><td>A</td><td>30</td><td>12</td><td>41</td><td>Se mantiene</td><td>CSMNOD/NODNAM</td></tr>
+<tr><td>Dirección beneficiario</td><td>A</td><td>30</td><td>42</td><td>71</td><td>Se mantiene</td><td>CSMNOD/NODGLA</td></tr>
+<tr><td>Comuna beneficiario</td><td>A</td><td>20</td><td>72</td><td>91</td><td>Se mantiene</td><td>CSMNOD/NODGCO</td></tr>
+<tr><td>Código banco</td><td>S</td><td>3</td><td>92</td><td>94</td><td>Se mantiene</td><td>CSMNOD/NODBCO</td></tr>
+<tr><td>Cta. cte. beneficiario</td><td>A</td><td>20</td><td>95</td><td>114</td><td>Se mantiene</td><td>CSMNOD/NODACC</td></tr>
+<tr><td>Monto trx</td><td>S</td><td>12</td><td>115</td><td>126</td><td>Se agranda a 12</td><td>CSMNOD/NODMTO</td></tr>
+<tr><td>Email beneficiario</td><td>A</td><td>25</td><td>127</td><td>151</td><td>Se mantiene</td><td>CSMNOD/NODEMA</td></tr>
+<tr><td><b>Código beneficiario (DCV)</b></td><td>S</td><td>5</td><td>152</td><td>156</td><td>Si tipo=3, ≠00000</td><td>CSMNOD_EX/ENODDCB</td></tr>
+<tr><td><b>Información remesa (CCLV)</b></td><td>A</td><td>15</td><td>157</td><td>171</td><td>Si tipo=4 (LIQSDPM/RV/HS&lt;aammdd&gt;)</td><td>CSMNOD_EX/ENODREM</td></tr>
+<tr><td><b>Clave DCV / Ref 1</b></td><td>A</td><td>7</td><td>172</td><td>178</td><td>Si tipo=3</td><td>CSMNOD_EX/ENODRF1</td></tr>
+<tr><td><b>Clave DCV / Ref 2</b></td><td>A</td><td>7</td><td>179</td><td>185</td><td>No validar</td><td>CSMNOD_EX/ENODRF2</td></tr>
+<tr><td><b>Clave DCV / Ref 3</b></td><td>A</td><td>7</td><td>186</td><td>192</td><td>No validar</td><td>CSMNOD_EX/ENODRF3</td></tr>
+<tr><td><b>Clave DCV / Ref 4</b></td><td>A</td><td>7</td><td>193</td><td>199</td><td>No validar</td><td>CSMNOD_EX/ENODRF4</td></tr>
+<tr><td>Filler</td><td>A</td><td>1</td><td>200</td><td>200</td><td>No validar</td><td>—</td></tr>
+</tbody></table>
+<p class='legend'>Los campos en negrita son los nuevos para DVP (tipo 3) y CCLV (tipo 4). Todos se exponen al canal por PA_CDETNOM / PA_CABDET (ver <a href='etapa-7-consulta.html'>etapa 7</a>).</p></body></html>

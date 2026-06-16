@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Etapas 4-5 — Switch</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>Etapas 4 y 5 — Switch AS400 / RPG: inyección y orquestación</h1>
+<div class='meta'>El core inyecta las transacciones al switch mediante un buffer estructurado. El switch graba en las tablas base y extendida, y el orquestador deriva los productos DVP/CCLV a un programa que arma el XML para el motor. Detalle del contrato en <a href='contrato-inyeccion.html'>Contrato de inyección</a>.</div>
+<h2>Inyección (etapa 4)</h2>
+<table><thead><tr><th>Programa</th><th>Rol</th></tr></thead><tbody>
+<tr><td><code>ILBTR017</code></td><td>Inyector desde el core; arma el buffer <code>EMDP01701</code> y llama al switch. Depende de la clase <code>EMDP01701</code> para compilar (Aldon).</td></tr>
+<tr><td><code>MDP0017</code></td><td>Servicio inyector DVP/CCLV en el switch. Recibe el buffer, deriva por producto (<code>E17CODPRD</code>).</td></tr>
+<tr><td><code>MDP0015</code></td><td>Servicio inyector base (legacy). MDP0017 hace <code>CALL 'MDP0015'</code> interno para grabar la base.</td></tr>
+<tr><td>Subrutina <code>@Sr_lbtrext</code></td><td>Graba los campos extendidos DVP/CCLV en la tabla nueva.</td></tr>
+</tbody></table>
+<table><thead><tr><th>Tabla</th><th>Rol</th></tr></thead><tbody>
+<tr><td><code>MDPLBTR</code> / <code>MDPBENE</code></td><td>Tablas legadas (base) escritas por MDP0015</td></tr>
+<tr><td><code>MDPLBTREXT</code></td><td>Tabla nueva con los campos extendidos DVP/CCLV</td></tr>
+</tbody></table>
+<h2>Orquestación (etapa 5)</h2>
+<table><thead><tr><th>Programa</th><th>Rol</th></tr></thead><tbody>
+<tr><td><code>MDP0010</code> (BIC24X7)</td><td>Orquestador. Lee transacciones en estado <code>'L'</code>; si es DVP o CCLV, deriva a MDP0016.</td></tr>
+<tr><td><code>MDP0016</code></td><td>Nuevo programa que arma el XML/payload SOAP. Hace <code>CHAIN</code> a las tablas base y extendida para completar los datos DVP/CCLV y retorna el payload al orquestador.</td></tr>
+</tbody></table>
+<p>El XML resultante va al motor de pagos (<a href='etapa-6-motor.html'>etapa 6</a>).</p></body></html>

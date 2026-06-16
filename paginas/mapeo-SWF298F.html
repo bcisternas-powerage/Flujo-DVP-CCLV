@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Mapeo SWF298F</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>Mapeo del archivo pivote SWF298F</h1>
+<div class='meta'>Estructura (DDS) del archivo pivote que crea <a href='ticket-IS-1131.html'>IS-1131</a> y reglas de
+extracción de cada dato desde <code>PRCNF</code> e <code>INFWR</code>. El proceso nuevo lee esos archivos
+(join <code>PRCSRF/PRCSMT = INFSRF/INFSST</code>), parsea los tags SWIFT y arma el registro del pivote.</div>
+<div class='ok'><b>Cómo leer la columna de extracción:</b> muchas reglas dependen del submensaje
+(<code>PRCSMT</code> = 103 o 202) y toman el valor de <code>INFM01</code> delimitado por <code>/</code>. El asterisco
+<code>*</code> en un tag (p. ej. <code>50*</code>) indica que viene una letra de opción variable que no es relevante
+para el dato.</div>
+<h2>Definición y reglas de extracción</h2>
+<table><thead><tr><th>Campo</th><th>Tipo</th><th>Largo</th><th>Dec.</th><th>Descripción</th><th>Regla de extracción</th></tr></thead><tbody>
+<tr><td class='mono'>SWFRUTO</td><td>A</td><td>25</td><td></td><td>RUT ORDENANTE</td><td>Si PRCSMT=103: INFTAG='50*' y desde INFM01 obtener valor entre el segundo y tercer "/".                          *Ejemplo: :50K:/0/970110003/1009, obtener 970110003  Si PRCSMT=202: INFTAG='52*' y desde INFM01 obtener valor entre el segundo y tercer "/".                          *Ejemplo: :52A:/0/970110003/1009, obtener 970110003 <i>("*" significa que viene un valor, pero no es relevante para el Dato.)</i></td></tr>
+<tr><td class='mono'>SWFBCOO</td><td>A</td><td>3</td><td></td><td>COD.BANCO ORDENANTE</td><td>Si PRCSMT=103: INFTAG='50*' y desde INFM01 obtener valor desde el tercer "/".                                    *Ejempoo: :50K:/0/970110003/1009, obtener 1009 Si PRCSMT=202: INFTAG='52*' y desde INFM01 obtener valor desde el tercer "/".                                    *Ejempoo: :52A:/0/970110003/1009, obtener 1009 <i>("*" significa que viene un valor, pero no es relevante para el Dato.)</i></td></tr>
+<tr><td class='mono'>SWFNBCO</td><td>A</td><td>45</td><td></td><td>NOMBRE BANCO ORDENAN</td><td>Si PRCSMT=103: INFTAG='20'  e INFSID es código SWIFT. El nombre se obtiene desde MTABAMST donde INSSWF=INFSID    *Ejemplo: DCVVCLR0AXXX, DEPOSITO CENTRAL DE VALORES S.A. Si PRCSMT=202: INFTAG='20'  e INFSID es código SWIFT. El nombre se obtiene desde MTABAMST donde INSSWF=INFSID    *Ejemplo: DCVVCLR0AXXX, DEPOSITO CENTRAL DE VALORES S.A.</td></tr>
+<tr><td class='mono'>SWFCTAO</td><td>S</td><td>19</td><td>0</td><td>CUENTA ORDENANTE</td><td>Si PRCSMT=103: INFTAG='50*' y desde INFM01 obtener valor entre el primer y segundo "/".                          *Ejemplo: :50K:/0/970110003/1009, obtener 0 Si PRCSMT=202: INFTAG='52*' y desde INFM01 obtener valor entre el primer y segundo "/".                          *Ejemplo: :52A:/0/970110003/1009, obtener 0 <i>("*" significa que viene un valor, pero no es relevante para el Dato.)</i></td></tr>
+<tr><td class='mono'>SWFTCTO</td><td>A</td><td>4</td><td></td><td>TIPO CTA ORDENANTE</td><td>—</td></tr>
+<tr><td class='mono'>SWFDCVO</td><td>A</td><td>4</td><td></td><td>CÓDIGO DCV ORDENANTE</td><td>—</td></tr>
+<tr><td class='mono'>SWFRUTD</td><td>A</td><td>25</td><td></td><td>RUT DESTINATARIO</td><td>Si PRCSMT=103: INFTAG='59' y desde INFM01 obtener valor entre el segundo y tercer "/".                           *Ejemplo: :59:/01258893/967676306/10020, obtener 967676306 Si PRCSMT=202: INFTAG='58*' y desde INFM01 obtener valor entre el segundo y tercer "/".                          *Ejemplo: :58A:/34220102306/970180001/1014, obtener 970180001</td></tr>
+<tr><td class='mono'>SWFBCOD</td><td>A</td><td>3</td><td></td><td>COD.BANCO DESTINATAR</td><td>Si PRCSMT=103: INFTAG='59' y desde INFM01 obtener valor desde el tercer "/".                                     *Ejempoo: :59:/01258893/967676306/10020, obtener 10020 Si PRCSMT=202: INFTAG='58*' y desde INFM01 obtener valor desde el tercer "/".                                    *Ejempoo: :58A:/34220102306/970180001/1014, obtener 1014</td></tr>
+<tr><td class='mono'>SWFNBCD</td><td>A</td><td>45</td><td></td><td>NOMBRE BANCO DESTINA</td><td>Si PRCSMT=103: INFTAG='20' e INFSID es código SWIFT. El nombre se obtiene desde MTABAMST donde INSSWF=INFSID       *Ejemplo: DCVVCLR0AXXX, DEPOSITO CENTRAL DE VALORES S.A. Si PRCSMT=202: INFTAG='20' e INFSID es código SWIFT. El nombre se obtiene desde MTABAMST donde INSSWF=INFSID       *Ejemplo: DCVVCLR0AXXX, DEPOSITO CENTRAL DE VALORES S.A.</td></tr>
+<tr><td class='mono'>SWFCTAD</td><td>S</td><td>19</td><td>0</td><td>CUENTA DESTINATARIO</td><td>Si PRCSMT=103: INFTAG='59' y desde INFM01 obtener valor entre el primer y segundo "/".                             *Ejempoo: :59:/01258893/967676306/10020, obtener 01258893 Si PRCSMT=202: INFTAG='58*' y desde INFM01 obtener valor entre el primer y segundo "/".                            *Ejempoo: :58A:/34220102306/970180001/1014, obtener 34220102306</td></tr>
+<tr><td class='mono'>SWFTCTD</td><td>A</td><td>4</td><td></td><td>TIPO CTA DESTINATARI</td><td>—</td></tr>
+<tr><td class='mono'>SWFDCVD</td><td>A</td><td>4</td><td></td><td>CÓDIGO DCV DESTINATA</td><td>—</td></tr>
+<tr><td class='mono'>SWFTIPS</td><td>A</td><td>3</td><td></td><td>TIPO SUBMENSAJE</td><td>PRCSMT</td></tr>
+<tr><td class='mono'>SWFCL01</td><td>A</td><td>7</td><td></td><td>CLAVE 1</td><td>INFTAG='72'  y desde INFM01 obtener valor desde el segundo "/".                                      *:72:/CR/puBy5bn, obtener puBy5bn <i>(Contiene el Dato principal, que corresponde a la clave)</i></td></tr>
+<tr><td class='mono'>SWFCL02</td><td>A</td><td>7</td><td></td><td>CLAVE 2</td><td>—</td></tr>
+<tr><td class='mono'>SWFCL03</td><td>A</td><td>7</td><td></td><td>CLAVE 3</td><td>—</td></tr>
+<tr><td class='mono'>SWFCL04</td><td>A</td><td>7</td><td></td><td>CLAVE 4</td><td>—</td></tr>
+<tr><td class='mono'>SWFCL05</td><td>A</td><td>7</td><td></td><td>CLAVE 5</td><td>—</td></tr>
+<tr><td class='mono'>SWFCL06</td><td>A</td><td>7</td><td></td><td>CLAVE 6</td><td>—</td></tr>
+<tr><td class='mono'>SWFCL07</td><td>A</td><td>7</td><td></td><td>CLAVE 7</td><td>—</td></tr>
+<tr><td class='mono'>SWFCL08</td><td>A</td><td>7</td><td></td><td>CLAVE 8</td><td>—</td></tr>
+<tr><td class='mono'>SWFCL09</td><td>A</td><td>7</td><td></td><td>CLAVE 9</td><td>—</td></tr>
+<tr><td class='mono'>SWFCL10</td><td>A</td><td>7</td><td></td><td>CLAVE 10</td><td>—</td></tr>
+<tr><td class='mono'>SWFMONE</td><td>A</td><td>3</td><td></td><td>MONEDA</td><td>INFTAG='32A' y desde INFM01 obtener valor desde posición 12 y de largo 3.                         *Ejemplo: :32A:260528CLP40000000, , obtener CLP         *La estructura es 6!n3!a15d <i>(Esta campo es comun para ambos Sub Tipos de Mensajes (103 ó 202))</i></td></tr>
+<tr><td class='mono'>SWFMONT</td><td>S</td><td>15</td><td>2</td><td>MONTO</td><td>INFTAG='32A' y desde INFM01 obtener valor desde posición 15 y de largo 15.                       *Ejemplo: :32A:260528CLP40000000, , obtener 40000000,   *La estructura es 6!n3!a15d <i>(Esta campo es comun para ambos Sub Tipos de Mensajes (103 ó 202))</i></td></tr>
+<tr><td class='mono'>SWFSNDR</td><td>A</td><td>16</td><td></td><td>SENDER REFERENCE</td><td>Esta info viene de PRCNF, campo PRCSRF. Y se debe usar para leer INFWR con campo INFSRF.</td></tr>
+<tr><td class='mono'>SWFIDDC</td><td>A</td><td>20</td><td></td><td>ID TRANSACCIÓN DCV</td><td>—</td></tr>
+<tr><td class='mono'>SWFIDCO</td><td>S</td><td>9</td><td>0</td><td>ID TRANSACCIÓN CORE</td><td>Esta info viene de PRCNF, campo PRCNUM. Es un numero unico IBS.</td></tr>
+<tr><td class='mono'>SWFFTRA</td><td>S</td><td>4</td><td>0</td><td>AÑO TRANSACCIÓN</td><td>PRCDTY. Corresponde al Año de Confirmación del Mensaje. Cuando ingresa a IBS.</td></tr>
+<tr><td class='mono'>SWFFTRM</td><td>S</td><td>2</td><td>0</td><td>MES TRANSACCIÓN</td><td>PRCDTM. Corresponde al Mes de Confirmación del Mensaje. Cuando ingresa a IBS.</td></tr>
+<tr><td class='mono'>SWFFTRD</td><td>S</td><td>2</td><td>0</td><td>DÍA TRANSACCIÓN</td><td>PRCDTD. Corresponde al Día de Confirmación del Mensaje. Cuando ingresa a IBS.</td></tr>
+<tr><td class='mono'>SWFTTRA</td><td>Z</td><td>26</td><td></td><td>TIMESTAMP TRANSACCI</td><td>PRCTIM. Corresponde A la fecha de Recepción del mensaje. Cuando ingresa a IBS.</td></tr>
+<tr><td class='mono'>SWFESTA</td><td>A</td><td>2</td><td></td><td>ESTADO</td><td>—</td></tr>
+<tr><td class='mono'>SWFTINT</td><td>A</td><td>4</td><td></td><td>TIPO INTERFAZ</td><td>—</td></tr>
+<tr><td class='mono'>SWFFIBS</td><td>S</td><td>12</td><td>0</td><td>FOLIO IBS</td><td>—</td></tr>
+<tr><td class='mono'>SWFUUCO</td><td>A</td><td>10</td><td></td><td>USUARIO ÚLTIMA CONSU</td><td>—</td></tr>
+<tr><td class='mono'>SWFFUCA</td><td>S</td><td>4</td><td>0</td><td>AÑO ÚLTIMA CONSU</td><td>—</td></tr>
+<tr><td class='mono'>SWFFUCM</td><td>S</td><td>2</td><td>0</td><td>MES ÚLTIMA CONSU</td><td>—</td></tr>
+<tr><td class='mono'>SWFFUCD</td><td>S</td><td>2</td><td>0</td><td>DÍA ÚLTIMA CONSU</td><td>—</td></tr>
+<tr><td class='mono'>SWFTUCA</td><td>Z</td><td>26</td><td></td><td>TIMEST ÚLTIMA CONSU</td><td>—</td></tr>
+<tr><td class='mono'>SWFUUMA</td><td>A</td><td>10</td><td></td><td>USUARIO ÚLTIMO MANT</td><td>—</td></tr>
+<tr><td class='mono'>SWFFUMA</td><td>S</td><td>4</td><td></td><td>AÑO ÚLTIMO MANTEN</td><td>—</td></tr>
+<tr><td class='mono'>SWFFUMM</td><td>S</td><td>2</td><td></td><td>MES ÚLTIMO MANTEN</td><td>—</td></tr>
+<tr><td class='mono'>SWFFUMD</td><td>S</td><td>2</td><td></td><td>DÍA ÚLTIMO MANTEN</td><td>—</td></tr>
+<tr><td class='mono'>SWFTUMA</td><td>Z</td><td>26</td><td></td><td>TIMEST ÚLTIMO MANTEN</td><td>—</td></tr>
+<tr><td class='mono'>SWFFIL1</td><td>S</td><td>12</td><td></td><td>FILLER 1</td><td>—</td></tr>
+<tr><td class='mono'>SWFFIL2</td><td>S</td><td>15</td><td>2</td><td>FILLER 2</td><td>—</td></tr>
+<tr><td class='mono'>SWFFIL3</td><td>S</td><td>9</td><td></td><td>FILLER 3</td><td>—</td></tr>
+<tr><td class='mono'>SWFFIL4</td><td>A</td><td>1</td><td></td><td>FILLER 4</td><td>—</td></tr>
+<tr><td class='mono'>SWFFIL5</td><td>A</td><td>4</td><td></td><td>FILLER 5</td><td>—</td></tr>
+<tr><td class='mono'>SWFFIL6</td><td>A</td><td>9</td><td></td><td>FILLER 6</td><td>—</td></tr>
+<tr><td class='mono'>SWFFIL7</td><td>A</td><td>25</td><td></td><td>FILLER 7</td><td>—</td></tr>
+<tr><td class='mono'>SWFFIL8</td><td>A</td><td>45</td><td></td><td>FILLER 8</td><td>—</td></tr>
+<tr><td class='mono'>SWFFIL9</td><td>A</td><td>60</td><td></td><td>FILLER 9</td><td>—</td></tr>
+<tr><td class='mono'>NUM REFER</td><td>S</td><td>9</td><td></td><td>NUM REFERENCIA</td><td>Esta info viene de PRCNF, campo PRCNUM. Es un numero unico IBS. [Ya está cubierto en campo SWFIDCO, no aplica]</td></tr>
+</tbody></table>
+<h2>Ejemplos de parseo de tags</h2>
+<table><thead><tr><th>Dato</th><th>Tag / origen</th><th>Ejemplo</th><th>Resultado</th></tr></thead><tbody>
+<tr><td>RUT ordenante (103)</td><td>INFTAG 50*, entre 2º y 3er "/"</td><td><code>:50K:/0/970110003/1009</code></td><td>970110003</td></tr>
+<tr><td>Cód. banco ordenante (103)</td><td>INFTAG 50*, desde el 3er "/"</td><td><code>:50K:/0/970110003/1009</code></td><td>1009</td></tr>
+<tr><td>Cuenta ordenante (103)</td><td>INFTAG 50*, entre 1er y 2º "/"</td><td><code>:50K:/0/970110003/1009</code></td><td>0</td></tr>
+<tr><td>RUT destinatario (202)</td><td>INFTAG 58*, entre 2º y 3er "/"</td><td><code>:58A:/34220102306/970180001/1014</code></td><td>970180001</td></tr>
+<tr><td>Moneda</td><td>INFTAG 32A, pos. 12 largo 3 (6!n3!a15d)</td><td><code>:32A:260528CLP40000000,</code></td><td>CLP</td></tr>
+<tr><td>Monto</td><td>INFTAG 32A, pos. 15 largo 15</td><td><code>:32A:260528CLP40000000,</code></td><td>40000000,</td></tr>
+<tr><td>Clave (DCV)</td><td>INFTAG 72, desde el 2º "/"</td><td><code>:72:/CR/puBy5bn</code></td><td>puBy5bn</td></tr>
+<tr><td>Nombre banco</td><td>INFTAG 20 + INFSID (SWIFT) → MTABAMST por INSSWF</td><td><code>DCVVCLR0AXXX</code></td><td>DEPOSITO CENTRAL DE VALORES S.A.</td></tr>
+</tbody></table>
+<div class='warn'>Campos administrativos (estado, folio IBS, usuario/fecha de última consulta y mantención,
+filler) no provienen del mensaje SWIFT; los gestiona el proceso de carga/consulta del pivote. El campo
+<code>NUM REFERENCIA</code> figura como ya cubierto por <code>SWFIDCO</code> (PRCNUM), no aplica.</div></body></html>

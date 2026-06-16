@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Consideraciones</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>Consideraciones de negocio</h1>
+<div class='meta'>Reglas de configuración y validación por producto, indicando si se configuran en el canal o en el core. Origen: planilla Consideraciones_DVP.</div>
+<table><thead><tr><th>Configuración</th><th>LBTR Archivo</th><th>LBTR x Trx</th><th>DVP</th><th>CCLV</th><th>Dónde</th></tr></thead><tbody>
+<tr><td>Cantidad de trx por archivo</td><td>5</td><td>N/A</td><td>N/A</td><td>N/A</td><td>Canal</td></tr>
+<tr><td>Monto máx. por trx (clientes generales)</td><td>MM$2.000</td><td>MM$2.000</td><td>—</td><td>—</td><td>Core (máx 11 dígitos por el motor)</td></tr>
+<tr><td>Monto máx. por trx (institucionales financieros)</td><td>MM$99.999 / MM$97.000</td><td>ídem</td><td>ídem</td><td>ídem</td><td>Core</td></tr>
+<tr><td>Trx diarias máx.</td><td>99 / 10</td><td>99 / 10</td><td>99</td><td>99</td><td>Core</td></tr>
+<tr><td>Monto límite diario (generales)</td><td>MM$2.000</td><td>MM$2.000</td><td>—</td><td>—</td><td>Core</td></tr>
+<tr><td>Monto límite diario (institucionales)</td><td>MM$999.999</td><td>MM$999.999</td><td>MM$999.999</td><td>MM$999.999</td><td>Core</td></tr>
+<tr><td>Monto autorizable por apoderado y máx. diario empresa</td><td>Sí</td><td>Sí</td><td>Sí</td><td>Sí</td><td>Canal (mini-sitio)</td></tr>
+<tr><td>Firma conjunta (individual no permitida)</td><td>Sí</td><td>Sí</td><td>Sí</td><td>Sí</td><td>Canal</td></tr>
+<tr><td>Firmar contrato LBTR</td><td>Sí</td><td>Sí</td><td>Sí</td><td>Sí</td><td>Canal</td></tr>
+<tr><td>Cobro de comisión</td><td>0,7 UF</td><td>0,7 UF</td><td>Parametrizar cobro manual</td><td>Parametrizar cobro manual</td><td>Canal</td></tr>
+<tr><td>Solo apoderados crean/modifican destinatarios (Interpass)</td><td>N/A</td><td>No</td><td>No</td><td>No</td><td>Canal</td></tr>
+<tr><td>Horario inicio/término</td><td>09:00-16:00</td><td>—</td><td>09:00-16:00</td><td>09:00-16:00</td><td>Canal</td></tr>
+</tbody></table>
+<h2>Validaciones</h2>
+<ul>
+<li>Saldo en la cuenta + línea; cuenta corriente y línea deben estar ACTIVAS.</li>
+<li>Que el banco destino sea 009 (Internacional) en los casos correspondientes.</li>
+<li>Que el RUT de destino sea un banco (ej. 970110003); listado de bancos configurable en el secreto del canal.</li>
+</ul></body></html>

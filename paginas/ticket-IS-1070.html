@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>IS-1070</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>IS-1070 · CWP-287 — Incorporación de campos nuevos en consultas LBTR</h1>
+<div class='meta'><b>Estado:</b> <span class='pill p-done'>Finalizado</span> &nbsp;·&nbsp;
+<b>Tipo:</b> Habilitador técnico &nbsp;·&nbsp; <b>Story points:</b> 5 &nbsp;·&nbsp; <b>Asignado:</b> Paolo Andaur ·
+<b>Épica:</b> Proyecto DVP-CCLV. Relacionado con IS-1090 (CWP-346), IS-1060 (CWP-261), CAMBIOS-8789.</div>
+<h2>Descripción</h2>
+<p>Como desarrollador Core, modificar las consultas que hoy se usan para LBTR para incorporar los campos nuevos que se usarán para DVP y CCLV, de cara al canal.</p>
+<h2>Alcance</h2>
+<ul>
+<li><code>PA_CNOMINA</code> — consulta una o más nóminas (solo encabezado): incorporar campos adicionales de encabezado.</li>
+<li><code>PA_CDETNOM</code> — consulta el detalle de una nómina: incorporar campos adicionales de detalle.</li>
+<li><code>PA_CABDET</code> — obtiene cabecera y detalle: incorporar ambos.</li>
+</ul>
+<h2>Criterios de aceptación</h2>
+<p>CA-01 PA_CNOMINA · CA-02 PA_CDETNOM · CA-03 PA_CABDET (cada PA debe exponer correctamente los campos nuevos).</p>
+<h2>Campos nuevos (notas técnicas)</h2>
+<table><thead><tr><th>PA</th><th>Campo → alias</th><th>Nota</th></tr></thead><tbody>
+<tr><td rowspan=3>PA_CNOMINA</td><td>NOHTYN → TIPO_NOMINA</td><td>Ya existía; viene de cabecera CINTNOH</td></tr>
+<tr><td>ENODDCO → DCV_ORDENAN</td><td>Campo de cabecera en archivo de detalle; se toma el primer registro, sin join</td></tr>
+<tr><td>ENODAGE → CCLV_AGENTE</td><td>Ídem, sin join para no duplicar cabeceras</td></tr>
+<tr><td rowspan=6>PA_CDETNOM</td><td>ENODDCB → DCV_BENEFI</td><td></td></tr>
+<tr><td>ENODREM → CCLV_REMESAS</td><td></td></tr>
+<tr><td>ENODRF1 → DCV_REF_1</td><td></td></tr><tr><td>ENODRF2 → DCV_REF_2</td><td></td></tr>
+<tr><td>ENODRF3 → DCV_REF_3</td><td></td></tr><tr><td>ENODRF4 → DCV_REF_4</td><td></td></tr>
+<tr><td rowspan=4>PA_CABDET</td><td>NOHNRO→TOTAL_NRO_REG · NOHMTO→TOTAL_MTO_REG</td><td></td></tr>
+<tr><td>NOHTYN→TIPO_NOMINA · NODEMA→EMAIL</td><td></td></tr>
+<tr><td>ENODDCO→DCV_ORDENAN · ENODAGE→CCLV_AGENTE · ENODDCB→DCV_BENEFI</td><td></td></tr>
+<tr><td>ENODREM→CCLV_REMESAS · ENODRF1-4→DCV_REF_1..4</td><td></td></tr>
+</tbody></table>
+<div class='warn'>Se corrigió también el <code>select count</code> de paginación en los 3 PA: antes no
+incorporaba los joins a tablas anexas, lo que podía generar inconsistencia en el conteo usado para paginar.</div></body></html>

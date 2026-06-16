@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Estados y errores</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>Estados y catálogos de error</h1>
+<div class='meta'>Catálogos de estados de nómina/transacción, códigos de rechazo y ubicación de las parametrías en el core.</div>
+<h2>Tipos de nómina (NOHTYN)</h2>
+<p><code>1</code> LBTR Archivo · <code>2</code> LBTR Manual/Trx · <code>3</code> DVP · <code>4</code> CCLV.</p>
+<h2>Estado de pago (ESTADO_PAGO, detalle)</h2>
+<p><code>E</code>/<code>R</code> Rechazado · <code>V</code> Rechazo pero se procesa manual · resto = aceptado o en proceso.</p>
+<h2>Cambio de estado en el motor</h2>
+<div class='danger'>Pagado: <code>06</code> → <code>09</code> (aplica a <b>todos</b> los productos).
+<code>99</code> = faltan fondos en la cámara (agregar a la tabla de códigos).</div>
+<h2>Códigos de rechazo — Notificar carga (ILBTR060)</h2>
+<table><thead><tr><th>Cód.</th><th>Descripción</th></tr></thead><tbody>
+<tr><td>00</td><td>Ingresada sin errores</td></tr><tr><td>01</td><td>Archivo no encontrado</td></tr>
+<tr><td>02</td><td>Nº de registros no concuerda con el archivo</td></tr><tr><td>03</td><td>Monto total no coincide</td></tr>
+<tr><td>04</td><td>Cuenta de abono no operativa</td></tr><tr><td>05</td><td>Convenio/RUT no existe</td></tr>
+<tr><td>06</td><td>RUT de empresa incorrecto</td></tr><tr><td>07</td><td>Fecha de cargo fuera de horario</td></tr>
+<tr><td>08</td><td>Fecha no es día hábil</td></tr><tr><td>09</td><td>Nº nómina ya creada</td></tr>
+<tr><td>10</td><td>Supera trx diarias permitidas</td></tr><tr><td>13</td><td>Supera monto diario permitido</td></tr>
+<tr><td>95</td><td>Usuario no encontrado</td></tr><tr><td>96</td><td>Operación no permitida</td></tr>
+<tr><td>97</td><td>Interfaz desordenada</td></tr><tr><td>98</td><td>Nómina con errores de detalle</td></tr>
+</tbody></table>
+<h2>Códigos de rechazo — Cambiar estado (ILBTR010)</h2>
+<table><thead><tr><th>Cód.</th><th>Descripción</th></tr></thead><tbody>
+<tr><td>00</td><td>Cambio efectuado</td></tr><tr><td>01</td><td>Nómina no encontrada</td></tr>
+<tr><td>02</td><td>RUT no corresponde a la nómina</td></tr><tr><td>03</td><td>No permite cambio de estado</td></tr>
+<tr><td>04</td><td>No puede ser aplicada</td></tr><tr><td>05</td><td>Fuera de horario</td></tr>
+<tr><td>06</td><td>No puede ser autorizada</td></tr><tr><td>10</td><td>Supera trx diarias</td></tr>
+<tr><td>11</td><td>Cargo en cta. cte. efectuado</td></tr><tr><td>12</td><td>Error al provisionar por falta de fondos</td></tr>
+<tr><td>13</td><td>Supera monto diario</td></tr><tr><td>95</td><td>Usuario no encontrado</td></tr>
+<tr><td>96</td><td>Operación no permitida</td></tr>
+</tbody></table>
+<h2>Ubicación de parametrías en el core (CNTIN)</h2>
+<table><thead><tr><th>Tabla</th><th>Contenido</th></tr></thead><tbody>
+<tr><td>CNTIN 123 (MDPSTS)</td><td>Estado del switch: A activo / C contingencia / I inactivo</td></tr>
+<tr><td>CNTIN 326 sub 00000023</td><td>Horario de las trx del core</td></tr>
+<tr><td>CNTIN 351 / 354</td><td>Glosas de rechazo en el core</td></tr>
+<tr><td>CNTIN 352</td><td>Estado de la nómina (CASH-LBTR)</td></tr>
+<tr><td>CNTIN 353</td><td>Estado detalle de nómina</td></tr>
+<tr><td>CNTIN 363</td><td>Códigos de rechazo / devolución</td></tr>
+</tbody></table>
+<div class='warn'>Tema sensible: los catálogos de error y rechazo provienen de documentación de pruebas; al
+publicar conviene contrastarlos con la parametría real vigente en cada ambiente.</div></body></html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Matriz de impacto</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>Matriz de impacto — qué intervenir y en qué etapa</h1>
+<div class='meta'>Punto de entrada para cualquier modificación del flujo DVP/CCLV: por cada programa,
+tabla o parámetro, en qué etapa del flujo participa, qué rol cumple y qué ticket lo introdujo o modificó. Si vas a
+tocar un componente, parte por aquí para ver qué arrastra.</div>
+<h2>Programas</h2>
+<table><thead><tr><th>Programa</th><th>Etapa</th><th>Rol</th><th>Ticket</th></tr></thead><tbody>
+<tr><td><code>ILBTR060</code> (clase ILBTR06001)</td><td><a href='etapa-2-ingreso.html'>2 — Ingreso</a></td><td>Notificar carga; valida y crea la nómina</td><td>IS-1071 (mod. mínima)</td></tr>
+<tr><td><code>ILBTR010</code> (clase ILBTR01001)</td><td><a href='etapa-3-autorizacion.html'>3 — Autorización</a></td><td>Cambio de estado por firma (06/08); dispara provisión, comisión, inyección</td><td>IS-1071</td></tr>
+<tr><td><code>LBTR0100</code></td><td><a href='etapa-3-autorizacion.html'>3 — Autorización</a></td><td>Proceso de autorización modificado</td><td>IS-1071</td></tr>
+<tr><td><code>ILBTR017</code></td><td><a href='etapa-4-5-switch.html'>4 — Inyección</a></td><td>Inyector desde el core; arma buffer EMDP01701</td><td>IS-1071 (nuevo)</td></tr>
+<tr><td>clase <code>EMDP01701</code></td><td><a href='etapa-4-5-switch.html'>4 — Inyección</a></td><td>Dependencia para compilar ILBTR017 (Aldon)</td><td>IS-1071</td></tr>
+<tr><td><code>MDP0017</code></td><td><a href='etapa-4-5-switch.html'>4 — Inyección</a></td><td>Servicio inyector DVP/CCLV en switch; deriva por producto</td><td>Contrato</td></tr>
+<tr><td><code>MDP0015</code></td><td><a href='etapa-4-5-switch.html'>4 — Inyección</a></td><td>Inyector base (legacy); CALL interno desde MDP0017</td><td>Base</td></tr>
+<tr><td><code>MDP0010</code> (BIC24X7)</td><td><a href='etapa-4-5-switch.html'>5 — Orquestación</a></td><td>Orquestador; lee trx estado 'L', deriva DVP/CCLV</td><td>Base</td></tr>
+<tr><td><code>MDP0016</code></td><td><a href='etapa-4-5-switch.html'>5 — Orquestación</a></td><td>Nuevo pgm que arma XML/SOAP DVP/CCLV (CHAIN base+extendida)</td><td>Contrato (nuevo)</td></tr>
+<tr><td>Motor MDP</td><td><a href='etapa-6-motor.html'>6 — Motor</a></td><td>Liquida ISO 20022; cambio de estado 06→09 y código 99</td><td>IS-1071</td></tr>
+<tr><td><code>ILBTR015</code></td><td><a href='etapa-6-motor.html'>6 — Motor</a></td><td>Notificador del portal; actualiza pizarra/estado</td><td>Base</td></tr>
+<tr><td><code>PA_CNOMINA</code></td><td><a href='etapa-7-consulta.html'>7 — Consulta</a></td><td>Consulta cabecera; +TIPO_NOMINA, DCV_ORDENAN, CCLV_AGENTE</td><td>IS-1070</td></tr>
+<tr><td><code>PA_CDETNOM</code></td><td><a href='etapa-7-consulta.html'>7 — Consulta</a></td><td>Consulta detalle; +DCV_BENEFI, CCLV_REMESAS, DCV_REF_1..4</td><td>IS-1070</td></tr>
+<tr><td><code>PA_CABDET</code></td><td><a href='etapa-7-consulta.html'>7 — Consulta</a></td><td>Cabecera+detalle; todos los campos nuevos + corrección de count</td><td>IS-1070</td></tr>
+<tr><td><code>IN0050</code> (RPG, SWIFT)</td><td><a href='etapa-0-ingesta-swift.html'>0 — Ingesta SWIFT</a></td><td>Descompone mensajes SWIFT; genera PRCNF e INFWR. <b>Se consume tal cual.</b></td><td>Base (no se modifica)</td></tr>
+<tr><td>Proceso carga pivote MT298</td><td><a href='etapa-0-ingesta-swift.html'>0</a> → MT298</td><td>Lee PRCNF/INFWR, parsea tags y carga SWF298F (ver <a href='mapeo-SWF298F.html'>mapeo</a>)</td><td>IS-1131 (nuevo)</td></tr>
+<tr><td>Proceso caducador (fin de día)</td><td>MT298</td><td>Lee SWF298F y caduca (estado 7) los pendientes del día (ver <a href='estados-mt298.html'>ciclo de vida</a>)</td><td>IS-1131 (nuevo)</td></tr>
+<tr><td>Procesos MT298 (caducidad + carga)</td><td>Transversal</td><td>Carga MT298 a pivote; caduca trx del día</td><td>IS-1131 (en progreso)</td></tr>
+</tbody></table>
+<h2>Tablas y archivos</h2>
+<table><thead><tr><th>Tabla/Archivo</th><th>Etapa</th><th>Rol</th><th>Ticket</th></tr></thead><tbody>
+<tr><td><code>CINTNOH</code></td><td>2, 7</td><td>Cabecera de nómina (NOHTYN = tipo)</td><td>IS-1070</td></tr>
+<tr><td><code>CSMNOD</code></td><td>2, 7</td><td>Detalle de nómina (legacy)</td><td>Base</td></tr>
+<tr><td><code>CSMNOD_EX</code></td><td>2, 7</td><td>Detalle extendido DVP/CCLV (ENOD*)</td><td>IS-1070/1071</td></tr>
+<tr><td><code>MDPLBTR</code> / <code>MDPBENE</code></td><td>4</td><td>Tablas base del switch</td><td>Base</td></tr>
+<tr><td><code>MDPLBTREXT</code></td><td>4, 5</td><td>Tabla nueva con campos extendidos</td><td>Contrato (nueva)</td></tr>
+<tr><td><code>JRNIBS</code></td><td>3</td><td>Asientos contables generados</td><td>IS-1071</td></tr>
+<tr><td><code>PRCNF</code></td><td>0, MT298</td><td>Cabecera del mensaje SWIFT (1 por MT298); generado por IN0050</td><td>Base · lee IS-1131</td></tr>
+<tr><td><code>INFWR</code></td><td>0, MT298</td><td>Detalle por tag (N por mensaje); generado por IN0050</td><td>Base · lee IS-1131</td></tr>
+<tr><td><code>WRTRF</code></td><td>MT298</td><td>Apoyo de transferencias recibidas</td><td>IS-1131</td></tr>
+<tr><td><code>SWF298F</code> (pivote)</td><td>MT298</td><td>Pivote MT298 (~55 campos); almacena trx digitada en DCV, expuesta al canal</td><td>IS-1131 (nuevo)</td></tr>
+<tr><td>Archivo entrada <code>LBTRINTE</code></td><td>1, 2</td><td>Trama de carga; posiciones 1-200 (ver mapeo)</td><td>IS-1071</td></tr>
+</tbody></table>
+<h2>Parametría</h2>
+<table><thead><tr><th>Parámetro</th><th>Etapa</th><th>Rol</th><th>Ticket</th></tr></thead><tbody>
+<tr><td><code>TDOPECON</code></td><td>3</td><td>Contabilidad por producto (archivo TDOPE_8795: 8 registros)</td><td>IS-1071</td></tr>
+<tr><td><code>TRSMST</code></td><td>3</td><td>Seguridad: montos y trx máximas diarias</td><td>IS-1071</td></tr>
+<tr><td><code>CNOFC 62</code></td><td>3</td><td>Nuevos canales DVP y CCLV</td><td>IS-1071</td></tr>
+<tr><td><code>CNTIN 123</code> (MDPSTS)</td><td>1, 6</td><td>Estado del switch (A/C/I)</td><td>Base</td></tr>
+<tr><td><code>CNTIN 326</code> sub 00000023</td><td>3</td><td>Horarios de las transacciones del core</td><td>Base</td></tr>
+<tr><td><code>CNTIN 352 / 353</code></td><td>6, 7</td><td>Estado de nómina / detalle de nómina</td><td>Base</td></tr>
+<tr><td><code>CNTIN 363</code></td><td>6</td><td>Códigos de rechazo / devolución</td><td>IS-1071 (+99)</td></tr>
+<tr><td><code>CNTIN 351 / 354</code></td><td>6</td><td>Glosas de rechazo en el core</td><td>Base</td></tr>
+</tbody></table>
+<p class='legend'>Las tablas CNTIN, TDOPECON y JRNIBS están además documentadas en el diccionario de datos IBS.</p></body></html>

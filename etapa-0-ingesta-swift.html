@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Etapa 0 — Ingesta SWIFT</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>Etapa 0 — Ingesta SWIFT (origen de PRCNF e INFWR)</h1>
+<div class='meta'>Etapa previa que alimenta al requerimiento <a href='ticket-IS-1131.html'>IS-1131</a>. El programa
+heredado <b>IN0050</b> recibe el archivo de exportación de SWIFT, descompone cada mensaje y graba los archivos
+<code>PRCNF</code> (cabecera) e <code>INFWR</code> (detalle por tag). Esos archivos son la <b>fuente de datos</b> que
+el nuevo proceso de IS-1131 leerá para construir el pivote <code>SWF298F</code>.</div>
+<div class='ok'><b>IN0050 no se modifica.</b> En este requerimiento se consume tal cual: solo se leen los
+archivos que ya genera. El trabajo nuevo es un proceso que interprete esos mensajes hacia el archivo pivote.</div>
+<h2>Qué hace IN0050</h2>
+<ul>
+<li>Lee el archivo de exportación SWIFT (bloques <code>{1:F..}</code>, <code>{2:O..}</code> y tags <code>:20:</code>, <code>:32A:</code>, <code>:50:</code>, <code>:59:</code>, <code>:72:</code>...).</li>
+<li>Detecta el tipo de mensaje (103, 202, 102, 700...) y el submensaje; separa pagos/recepciones, cartas de crédito y otros.</li>
+<li>Resuelve cuentas y bancos contra tablas del core (ACMST, CUMST, MTABAMST, etc.).</li>
+<li>Graba la cabecera en <code>PRCNF</code> (subrutina <code>wrtprcnf</code>) y el detalle por tag en <code>INFWR</code> (subrutina <code>wrtinfwr</code>).</li>
+</ul>
+<h2>Archivos generados que consume IS-1131</h2>
+<table><thead><tr><th>Archivo</th><th>Contenido</th><th>Campos clave</th></tr></thead><tbody>
+<tr><td><code>PRCNF</code></td><td>Cabecera: 1 registro por mensaje MT298</td><td>PRCSRF (sender ref) · PRCSMT (submensaje) · PRCNUM (id único IBS) · PRCDTY/DTM/DTD · PRCTIM</td></tr>
+<tr><td><code>INFWR</code></td><td>Detalle: N registros por mensaje (uno por tag)</td><td>INFSRF · INFSST (subtipo) · INFTAG · INFM01 (contenido del tag)</td></tr>
+</tbody></table>
+<div class='warn'><b>Relación entre archivos:</b> el detalle se enlaza con la cabecera por
+<code>PRCNF.PRCSRF/PRCSMT = INFWR.INFSRF/INFSST</code>. Esta es la base de las reglas de extracción del pivote.</div>
+<h2>El flujo MT298 en contexto</h2>
+<p>Esta etapa es el inicio del flujo MT298 completo: el pago se carga en Web DCV, el DCV gatilla el SWIFT 298, IN0050 genera PRCNF/INFWR, la información se consolida en <code>SWF298F</code> y alimenta al canal para generar la transacción LBTR. Al cierre del día, el proceso caducador depura los pendientes.</p>
+<figure style="margin:16px 0;border:1px solid #dfe1e6;border-radius:8px;padding:8px;background:#fff;">
+<img src='../img/flujo-mt298-detalle.png' alt='Flujo de procesamiento SWIFT 298 de extremo a extremo' style="display:block;width:100%;height:auto;border-radius:4px;">
+<figcaption style="font-size:12px;color:#5e6c84;margin-top:6px;text-align:center;">Flujo de procesamiento SWIFT 298 — del cliente en Web DCV hasta la transacción LBTR y el proceso caducador.</figcaption></figure>
+<p>Detalle técnico del programa en <a href='programa-IN0050.html'>Programa IN0050</a>. Reglas de extracción campo a campo en <a href='mapeo-SWF298F.html'>Mapeo del pivote SWF298F</a>. Ciclo de vida y estados en <a href='estados-mt298.html'>Ciclo de vida MT298 y proceso caducador</a>.</p></body></html>

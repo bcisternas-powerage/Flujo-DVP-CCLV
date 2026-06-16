@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Etapa 6 — Motor</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>Etapa 6 — Motor de pagos y notificación</h1>
+<div class='meta'>El orquestador envía el XML al motor de pagos (ISO 20022), que liquida contra las redes externas y devuelve el resultado. El estado se actualiza y se notifica al portal.</div>
+<table><thead><tr><th>Componente</th><th>Rol</th></tr></thead><tbody>
+<tr><td>Motor de pagos MDP (ISO 20022)</td><td>Recibe el XML vía WS SOAP. Retorna éxito o error (<code>99</code>, <code>100</code>, <code>301</code>).</td></tr>
+<tr><td>COMBANC / DCV</td><td>Liquidación simultánea (DVP)</td></tr>
+<tr><td>CCLV / Banco Central</td><td>Triangulación (CCLV)</td></tr>
+<tr><td><code>ILBTR015</code></td><td>Notificador del portal. Actualiza la pizarra del canal con el estado final.</td></tr>
+</tbody></table>
+<div class='danger'>Estado final: <code>09</code> = pagado, <code>99</code> = faltan fondos en la cámara
+(aplica a todos los productos — ver <a href='etapa-3-autorizacion.html'>etapa 3</a>).</div>
+<p>Catálogo completo de estados y errores en <a href='estados-y-errores.html'>Estados y errores</a>.</p></body></html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Etapa 2 — Ingreso</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>Etapa 2 — Ingreso al core y creación de la nómina</h1>
+<div class='meta'>El canal notifica al core que hay una nómina para procesar. El core valida y crea la nómina, dejando la cabecera y el detalle en las tablas correspondientes, incluyendo los campos extendidos para DVP/CCLV.</div>
+<h2>Programa principal: ILBTR060 (Notificar al Core carga LBTR)</h2>
+<p>OpenAPI que notifica al core la existencia de un archivo/nómina. Clase <code>ILBTR06001</code>. Recibe tipo de interfaz, RUT empresa, nº de registros, monto total, cuenta de cargo, usuario e id de nómina.</p>
+<div class='warn'>El campo <b>Tipo de Interfaz</b> (posición 59 del archivo de entrada) define el producto:
+<code>1</code> = LBTR Archivo · <code>2</code> = LBTR Transacción · <code>3</code> = DVP · <code>4</code> = CCLV.
+La validación debe permitir solo valores 1-4 (error 14 si no).</div>
+<h2>Tablas destino</h2>
+<table><thead><tr><th>Tabla</th><th>Rol</th><th>Campos DVP/CCLV nuevos</th></tr></thead><tbody>
+<tr><td><code>CINTNOH</code></td><td>Cabecera de nómina</td><td>NOHTYN (tipo nómina 1-4)</td></tr>
+<tr><td><code>CSMNOD</code></td><td>Detalle de nómina (legacy)</td><td>—</td></tr>
+<tr><td><code>CSMNOD_EX</code></td><td>Detalle extendido (nuevo, paralelo a CSMNOD)</td><td>ENODTYN, ENODDCO, ENODAGE, ENODDCB, ENODREM, ENODRF1-4</td></tr>
+</tbody></table>
+<p>El mapeo posición-a-campo está en <a href='mapeo-entrada.html'>Mapeo del archivo de entrada</a>. Códigos de rechazo del servicio en <a href='estados-y-errores.html'>Estados y errores</a>.</p></body></html>

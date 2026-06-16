@@ -1,0 +1,17 @@
+<!DOCTYPE html><html lang='es'><head><meta charset='utf-8'><title>Etapa 7 — Consulta</title><link rel='stylesheet' href='../estilo.css'></head><body><div class='nav'><a href='../indice.html'>&larr; Volver al índice del flujo</a></div>
+<h1>Etapa 7 — Consulta de nóminas y estados</h1>
+<div class='meta'>Cubierta por <a href='ticket-IS-1070.html'>IS-1070</a>. Los procedimientos almacenados de consulta se ampliaron para exponer al canal los campos nuevos de DVP/CCLV.</div>
+<table><thead><tr><th>PA</th><th>Qué consulta</th><th>Tablas</th></tr></thead><tbody>
+<tr><td><code>PA_CNOMINA</code></td><td>Una o más nóminas (solo cabecera)</td><td>CINTNOH · CNTIN 352</td></tr>
+<tr><td><code>PA_CDETNOM</code></td><td>Detalle de una nómina específica</td><td>CSMNOD / CSMNOD_EX</td></tr>
+<tr><td><code>PA_CABDET</code></td><td>Cabecera + detalle (todo en uno)</td><td>CINTNOH + CSMNOD_EX</td></tr>
+</tbody></table>
+<h2>Campos nuevos expuestos (IS-1070)</h2>
+<table><thead><tr><th>PA</th><th>Campo origen → alias</th></tr></thead><tbody>
+<tr><td>PA_CNOMINA</td><td>NOHTYN→TIPO_NOMINA · ENODDCO→DCV_ORDENAN · ENODAGE→CCLV_AGENTE</td></tr>
+<tr><td>PA_CDETNOM</td><td>ENODDCB→DCV_BENEFI · ENODREM→CCLV_REMESAS · ENODRF1-4→DCV_REF_1..4</td></tr>
+<tr><td>PA_CABDET</td><td>NOHNRO→TOTAL_NRO_REG · NOHMTO→TOTAL_MTO_REG · NOHTYN→TIPO_NOMINA · NODEMA→EMAIL · ENODDCO→DCV_ORDENAN · ENODAGE→CCLV_AGENTE · ENODDCB→DCV_BENEFI · ENODREM→CCLV_REMESAS · ENODRF1-4→DCV_REF_1..4</td></tr>
+</tbody></table>
+<div class='warn'>Nota técnica del ticket: <code>ENODDCO</code> y <code>ENODAGE</code> son de cabecera pero
+viven en un archivo de detalle; la consulta toma el primer registro encontrado y <b>no</b> hace join, para no duplicar
+cabeceras. Además se corrigió el <code>select count</code> de paginación para que considere los joins a tablas anexas.</div></body></html>
